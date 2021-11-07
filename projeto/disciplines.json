@@ -1,49 +1,45 @@
 {
-  "megadados": {
-    "nome": "megadados",
-    "nome_professor": "Fabio",
-    "sobrenome_professor": "Ayres",
-    "nota": [
-      {
-        "id": "1",
-        "descricao": "blableblablebla"
-      },
-      {
-        "id": "2",
-        "descricao": "gugudada"
-      }
-    ]
-  },
-  "machine-learning": {
-    "nome": "machine-learning",
-    "nome_professor": "Fabio",
-    "sobrenome_professor": "Ayres",
-    "nota": [
-      {
-        "id": "1",
-        "descricao": "lakjajfajjfl"
-      }
-    ]
-  },
-  "string": {
-    "nome": "string",
-    "nome_professor": "string",
-    "sobrenome_professor": "string",
-    "nota": [
-      {
-        "id": "1",
-        "descricao": "sdkljsldjk"
-      },
-      {
-        "id": "2",
-        "descricao": "aldjaksjdklasjd"
-      }
-    ]
-  },
-  "striasdasdasdasdang": {
-    "nome": "striasdasdasdasdang",
-    "nome_professor": "asdasd",
-    "sobrenome_professor": "adasd",
-    "nota": [ ]
-  }
+    "machine-learning": {
+        "nome": "machine-learning",
+        "nome_professor": "Fabio",
+        "notas": [
+            {
+                "descricao": "lakjajfajjfl",
+                "id": "1"
+            }
+        ],
+        "sobrenome_professor": "Ayres"
+    },
+    "megadados": {
+        "nome": "megadados",
+        "nome_professor": "Fabio",
+        "notas": [
+            {
+                "descricao": "gugudada",
+                "id": "2"
+            }
+        ],
+        "sobrenome_professor": "Ayres"
+    },
+    "striasdasdasdasdang": {
+        "nome": "striasdasdasdasdang",
+        "nome_professor": "asdasd",
+        "notas": [],
+        "sobrenome_professor": "adasd"
+    },
+    "string": {
+        "nome": "string",
+        "nome_professor": "string",
+        "notas": [
+            {
+                "descricao": "sdkljsldjk",
+                "id": "1"
+            },
+            {
+                "descricao": "aldjaksjdklasjd",
+                "id": "2"
+            }
+        ],
+        "sobrenome_professor": "string"
+    }
 }
