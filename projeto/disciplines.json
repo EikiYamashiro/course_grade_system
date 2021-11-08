@@ -1,36 +1,18 @@
 {
-    "machine learning": {
-        "nome": "machine learning",
+    "Machine Learning": {
+        "nome": "Machine Learning",
         "nome_professor": "Fabio",
         "notas": [
             {
-                "descricao": "ola sou uma anotacao de machine ",
+                "descricao": "Materia em que maquinas aprendem",
                 "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
             }
         ],
         "sobrenome_professor": "Ayres"
     },
-    "megadados": {
-        "nome": "megadados",
-        "nome_professor": "Fabio",
-        "notas": [
-            {
-                "descricao": "string",
-                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            }
-        ],
-        "sobrenome_professor": "Ayres"
-    },
-    "striasdasdasdasdang": {
-        "nome": "striasdasdasdasdang",
-        "nome_professor": "asdasd",
-        "notas": [],
-        "sobrenome_professor": "adasd"
-    },
-    "string": {
-        "nome": "string",
-        "nome_professor": "string",
-        "notas": [],
-        "sobrenome_professor": "string"
+    "Redes Sociais": {
+        "nome": "Redes Sociais",
+        "nome_professor": null,
+        "sobrenome_professor": null
     }
 }

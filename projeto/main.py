@@ -1,8 +1,8 @@
 import json
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.param_functions import Body
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID
 
 class Nota(BaseModel):
@@ -47,27 +47,32 @@ def read_root():
 
 
 # O usuário pode listar os nomes de suas disciplinas
-@app.get("/disciplines/names")
+@app.get("/disciplines/names", status_code=200)
 def read_name_disciplines():
     data = read_file()
     lista = []
+    i = 0
     for k, v in data.items():
         for k2, v2 in v.items():
             if k2 == "nome":
+                i += 1
+                lista.append(i)
                 lista.append(v2)
-    return lista
+    print("ola")
+    return {lista[i]: lista[i + 1] for i in range(0, len(lista), 2)} #*
+#* credits to Smitha Dinesh: https://www.geeksforgeeks.org/python-convert-a-list-to-dictionary/
 
 
 # O usuário pode criar uma disciplina
-@app.post("/disciplines")
+@app.post("/disciplines", status_code=201)
 def create_discipline(new_discipline: Discipline):
     data = read_file()
     disciplines = list(data.keys())
     # A disciplina tem um nome único (obrigatório)
     if new_discipline.nome not in disciplines:
         write_file(new_discipline.dict())
-        return new_discipline.dict()
-    return {"Error": "Disciplina já existente"}
+        return {"detail": "Disciplina criada com sucesso"}
+    raise HTTPException(status_code=400, detail="Disciplina já existente")
 
 
 # O usuário pode deletar uma disciplina
@@ -77,95 +82,122 @@ def delete_discipline(nome: str):
     if see_if_exists(data, nome):
         data.pop(nome)
         write_all_file(data)
-        return data
-    return {"Error": "Disciplina não existente"}
+        return {"Detail": "Disciplina deletada com sucesso"}
+    raise HTTPException(status_code=404, detail="Disciplina não encontrada")
 
-
-# O usuário pode listar as notas de uma disciplina
-@app.get("/disciplines/notes/{nome}")
-def read_notes_from_discipline(nome: str):
+# O usuário pode modificar as informações de uma disciplina INCLUINDO seu nome
+@app.put("/disciplines/{nome}", status_code=200)
+def update_discipline(nome: str, disciplina: Discipline):
     data = read_file()
     dictionary = {}
-    for k, v in data.items():
-        if k == nome:
-            for k2, v2 in v.items():
-                if k2 == "notas":
-                    for i in v2:
-                        dictionary[i['id']] = i['descricao']
-    if len(dictionary) == 0:
-        return {"Error": "Essa disciplina não tem notas"}
-    return dictionary
+    if see_if_exists(data, nome):
+        for k, v in data.items():
+            notas = False
+            nome_professor = False
+            sobrenome_professor = False
+            for i in v:
+                if i == "notas":
+                    notas = True
+                if i == "nome_professor":
+                    nome_professor = True
+                if i == "sobrenome_professor":
+                    sobrenome_professor = True
+            if k == nome:
+                dictionary['nome'] = disciplina.nome
+                if nome_professor:
+                    dictionary['nome_professor'] = disciplina.nome_professor
+                if sobrenome_professor:
+                    dictionary['sobrenome_professor'] = disciplina.sobrenome_professor
+                if notas:
+                    dictionary['notas'] = data[nome]['notas']
+        data[disciplina.nome] = dictionary
+    else:
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
+    if not disciplina.nome == nome:
+        del data[nome]
+    write_all_file(data)
+    return {"Detail": "Disciplina alterada com sucesso"}
+
+# O usuário pode listar as notas de uma disciplina
+@app.get("/disciplines/notes/{nome}", status_code=200)
+def read_notes_from_discipline(nome: str):
+    data = read_file()
+    if see_if_exists(data, nome):
+        dictionary = {}
+        for k, v in data.items():
+            if k == nome:
+                for k2, v2 in v.items():
+                    if k2 == "notas":
+                        for i in v2:
+                            dictionary[i['id']] = i['descricao']
+        if len(dictionary) == 0:
+            raise HTTPException(status_code=400, detail="Essa disciplina não tem notas")
+        return dictionary
+    raise HTTPException(status_code=404, detail="Disciplina não encontrada")
 
 
 # O usuário pode adicionar uma nota a uma disciplina
-@app.post("/disciplines/{disciplina}")
+@app.post("/disciplines/{disciplina}", status_code=201)
 def create_discipline_note(disciplina: str, nota: Nota):
     data = read_file()
     already_exists = False
     if see_if_exists(data, disciplina):
         data_discipline = data[disciplina]
         nota.id = str(nota.id)
-        for i in data_discipline['notas']:
-            if i['id'] == nota.id:
-                already_exists = True
+        notas = False
+        for k, v in data.items():
+            if k == disciplina:
+                for i in v:
+                    if i == "notas":
+                        notas = True
+                        for i in data_discipline['notas']:
+                            if i['id'] == nota.id:
+                                already_exists = True
+        if not notas:
+            data_discipline['notas'] = []
         if not already_exists:
             data_discipline['notas'].append(nota.dict())
             data[disciplina] = data_discipline
             write_all_file(data)
-            return data_discipline
-        return {"Error": "Uma nota com esse identificador já existe"}
+            return {"Detail": "Nota adicionada com sucesso"}
+        raise HTTPException(status_code=400, detail="Uma nota com esse id já existe")
     else:
-        return {"Error": "Disciplina não existente"}
-
-
-# O usuário pode deletar uma nota de uma disciplina
-@app.delete("/disciplines/{nome}/notes/{id}")
-def delete_note_from_discipline(nome: str, id: int):
-    data = read_file()
-    if see_if_exists(data, nome):
-        data_discipline = data[nome]
-        exists = False
-        for i in data_discipline["notas"]:
-            if int(i['id']) == id:
-                index = data_discipline["notas"].index(i)
-                del data_discipline["notas"][index]
-                exists = True
-        if exists:
-            data[nome] = data_discipline
-            write_all_file(data)
-            return data_discipline
-        return {"Error": "Essa anotação não existe"}
-    return {"Error": "Disciplina não existente"}
-
+        raise HTTPException(status_code=404, detail="Disciplina não encontrada")
 
 # O usuário pode modificar uma nota de uma disciplina
-@app.put("/disciplines/{disciplina}/notes/")
+@app.put("/disciplines/{disciplina}/notes/", status_code=201)
 def update_note(disciplina: str, nota: Nota = Body(..., description="Remember to put the correct ID")):
     data = read_file()
     if see_if_exists(data, disciplina):
         data_discipline = data[disciplina]
         exists = False
         for i in data_discipline["notas"]:
-            if int(i['id']) == int(nota.id):
+            if str(i['id']) == str(nota.id):
                 i['descricao'] = nota.descricao
                 exists = True
         if exists:
             data[disciplina] = data_discipline
             write_all_file(data)
-            return {"Anotação alterada com sucesso"}
-        return {"Error": "Essa anotação não existe"}
-    return {"Error": "Disciplina não existente"}
+            return {"Detail": "Anotação alterada com sucesso"}
+        raise HTTPException(status_code=404, detail="Nota não encontrada nessa disciplina")
+    raise HTTPException(status_code=404, detail="Disciplina não encontrada")
 
-'''
-CHECK O usuário pode criar uma disciplina
-CHECK A disciplina tem um nome único (obrigatório)
-CHECK A disciplina tem um nome de professor (opcional)
-CHECK A disciplina tem um campo de anotação livre (texto)
-CHECK O usuário pode deletar uma disciplina
-CHECK O usuário pode listar os nomes de suas disciplinas
-• O usuário pode modificar as informações de uma disciplina INCLUINDO seu nome
-CHECK O usuário pode adicionar uma nota a uma disciplina
-CHECK O usuário pode deletar uma nota de uma disciplina
-CHECK O usuário pode listar as notas de uma disciplina
-CHECK O usuário pode modificar uma nota de uma disciplina
-'''
+# O usuário pode deletar uma nota de uma disciplina
+@app.delete("/disciplines/{nome}/notes/{id}", status_code=200)
+def delete_note_from_discipline(nome: str, id: UUID):
+    data = read_file()
+    if see_if_exists(data, nome):
+        data_discipline = data[nome]
+        exists = False
+        for i in data_discipline["notas"]:
+            if str(i['id']) == str(id):
+                index = data_discipline["notas"].index(i)
+                del data_discipline["notas"][index]
+                exists = True
+        if exists:
+            data[nome] = data_discipline
+            write_all_file(data)
+            return {"Detail": "Anotação deletada com sucesso"}
+        raise HTTPException(status_code=404, detail="Nota não encontrada")
+    raise HTTPException(status_code=404, detail="Disciplina não encontrada")
+
