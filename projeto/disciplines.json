@@ -1,0 +1,18 @@
+{
+    "Machine Learning": {
+        "nome": "Machine Learning",
+        "nome_professor": "Fabio",
+        "notas": [
+            {
+                "descricao": "Materia em que maquinas aprendem",
+                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            }
+        ],
+        "sobrenome_professor": "Ayres"
+    },
+    "Redes Sociais": {
+        "nome": "Redes Sociais",
+        "nome_professor": null,
+        "sobrenome_professor": null
+    }
+}
