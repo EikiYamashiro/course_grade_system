@@ -1,27 +1,26 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+from uuid import UUID
 
 from .database import Base
 
 
-class User(Base):
-    __tablename__ = "user"
+class Disciplina(Base):
+    __tablename__ = "disciplina"
+
+    nome = Column(String, primary_key=True, index=True)
+    nome_professor = Column(String, index=True)
+    sobrenome_professor = Column(String, index=True)
+
+    nota = relationship("Nota", back_populates="disciplina")
+
+
+class Nota(Base):
+    __tablename__ = "nota"
     # Acho que a gente vai mexer aqui
 
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    descricao = Column(String, index=True)
+    nome_disciplina = Column(String, ForeignKey("disciplina.nome"))
 
-    items = relationship("Item", back_populates="owner")
-
-
-class Item(Base):
-    __tablename__ = "items"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-
-    owner = relationship("User", back_populates="items")
+    disciplina = relationship("Disciplina", back_populates="nota")

@@ -1,37 +1,38 @@
 from typing import List, Optional
 
 from pydantic import BaseModel
+from uuid import UUID
 
 
-class ItemBase(BaseModel):
-    title: str
-    description: Optional[str] = None
+# class DisciplinaBase(BaseModel):
+#     nome_professor: Optional[str] = None
+#     sobrenome_professor: Optional[str] = None
 
 
-class ItemCreate(ItemBase):
-    pass
+# class DisciplinaCreate(DisciplinaBase):
+#     pass
 
 
-class Item(ItemBase):
-    id: int
-    owner_id: int
+class Disciplina(BaseModel):
+    nome: str
+    nome_professor: Optional[str] = None
+    sobrenome_professor: Optional[str] = None
 
     class Config:
         orm_mode = True
 
 
-class UserBase(BaseModel):
-    email: str
+# class NotaBase(BaseModel):
 
 
-class UserCreate(UserBase):
-    password: str
+# class NotaCreate(NotaBase):
+#     pass
 
 
-class User(UserBase):
+class Nota(BaseModel):
     id: int
-    is_active: bool
-    items: List[Item] = []
+    nome_disicplina: str
+    descricao: str
 
     class Config:
         orm_mode = True
