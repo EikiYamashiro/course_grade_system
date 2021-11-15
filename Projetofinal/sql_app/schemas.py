@@ -22,17 +22,13 @@ class Disciplina(BaseModel):
         orm_mode = True
 
 
-# class NotaBase(BaseModel):
-
-
-# class NotaCreate(NotaBase):
-#     pass
-
-
-class Nota(BaseModel):
+class NotaCreate(BaseModel):
     id: int
-    nome_disicplina: str
     descricao: str
+
+
+class Nota(NotaCreate):
+    nome_disicplina: str
 
     class Config:
         orm_mode = True

@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from uuid import UUID
 
-from .database import Base
+from database import Base
 
 
 class Disciplina(Base):
