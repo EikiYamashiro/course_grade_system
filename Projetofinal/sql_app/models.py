@@ -11,6 +11,7 @@ class Disciplina(Base):
     nome = Column(String, primary_key=True, index=True)
     nome_professor = Column(String, index=True)
     sobrenome_professor = Column(String, index=True)
+    anotacao = Column(String, index=True)
 
     nota = relationship("Nota", back_populates="disciplina")
 

@@ -17,6 +17,7 @@ class Disciplina(BaseModel):
     nome: str
     nome_professor: Optional[str] = None
     sobrenome_professor: Optional[str] = None
+    anotacao: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -28,7 +29,7 @@ class NotaCreate(BaseModel):
 
 
 class Nota(NotaCreate):
-    nome_disicplina: str
+    nome_disciplina: str
 
     class Config:
         orm_mode = True
