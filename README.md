@@ -3,6 +3,7 @@ Microserviço de controle de notas. A aplicação no qual esse  microsserviço s
 
 
 Para rodar a entrega final, entrar na pasta "Projetofinal" (entrega para o dia 17/11):
+
 1- Criar um arquivo .env com a seguinte estrutura:
   SQL_SERVER=
   SQL_USER=
