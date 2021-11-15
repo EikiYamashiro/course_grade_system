@@ -8,11 +8,11 @@ import models
 import schemas
 from database import SessionLocal, engine
 
-try:
-    models.Base.metadata.create_all(bind=engine)
-except:
-    print("Base de dados já existente")
-
+# try:
+    # print("creat")
+models.Base.metadata.create_all(bind=engine)
+# except:
+#     print("Base de dados já existente")
 app = FastAPI()
 
 # Dependency
