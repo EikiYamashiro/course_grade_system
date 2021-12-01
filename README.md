@@ -19,3 +19,6 @@ Para rodar a entrega final, entrar na pasta "Projetofinal" (entrega para o dia 1
   2.2- sqlalchemy_utils
   
 3- Entrar na pasta "sql_app" e rodar o comando: ```python uvicorn main:app --reload```  
+
+
+Integrantes: Joao, William e Eiki
